@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--
+  Meadow House Repairs
+  --------------------------------------------------------------
+  This file holds the page STRUCTURE only.
+    - Styling lives in css/styles.css
+    - Behaviour lives in the js/ folder (loaded at the bottom of this file)
+  Job cards are created by js/ui-jobs.js and inserted into #job-list.
+-->
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meadow House Repairs</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Lets keyboard users jump past the form straight to the jobs -->
+  <a class="skip-link" href="#jobs-heading">Skip to repair jobs</a>
+
+  <header class="site-header">
+    <div class="container">
+      <h1>Meadow House Repairs</h1>
+      <p class="site-header__intro">Report a repair, follow its progress and see what was done.</p>
+    </div>
+  </header>
+
+  <main class="container layout">
+
+    <!-- Shown if the browser cannot save data (see app.js) -->
+    <div id="storage-notice" class="notice notice--error layout__notice" role="alert" hidden></div>
+
+    <noscript>
+      <p class="notice notice--error layout__notice">
+        This app needs JavaScript to be turned on in your browser.
+      </p>
+    </noscript>
+
+    <!-- ============ LEFT: the repair report form ============ -->
+    <section class="panel" aria-labelledby="form-heading">
+      <h2 id="form-heading">Report a repair</h2>
+
+      <!--
+        novalidate: we show our own, clearer error messages (see js/ui-form.js)
+        instead of the browser's pop-up bubbles.
+      -->
+      <form id="report-form" novalidate>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <p id="description-hint" class="hint">What needs repairing? Up to 500 characters.</p>
+          <textarea id="description" name="description" rows="4" maxlength="500"
+                    required aria-required="true" aria-describedby="description-hint"></textarea>
+          <p id="description-error" class="error" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="reporter">Reporter name</label>
+          <p id="reporter-hint" class="hint">Who is reporting this repair?</p>
+          <input id="reporter" name="reporter" type="text" maxlength="80" autocomplete="off"
+                 required aria-required="true" aria-describedby="reporter-hint">
+          <p id="reporter-error" class="error" hidden></p>
+        </div>
+
+        <fieldset class="field fieldset">
+          <legend>Priority</legend>
+          <p id="priority-hint" class="hint">Choose Urgent for safety risks or anything that cannot wait.</p>
+          <div class="radio-row">
+            <div class="radio">
+              <input type="radio" id="priority-normal" name="priority" value="Normal" checked
+                     aria-describedby="priority-hint">
+              <label for="priority-normal">Normal</label>
+            </div>
+            <div class="radio">
+              <input type="radio" id="priority-urgent" name="priority" value="Urgent"
+                     aria-describedby="priority-hint">
+              <label for="priority-urgent">Urgent</label>
+            </div>
+          </div>
+          <p id="priority-error" class="error" hidden></p>
+        </fieldset>
+
+        <button type="submit" class="btn btn--primary btn--block">Submit repair report</button>
+
+        <!-- Confirmation or "please fix" summary appears here (announced to screen readers) -->
+        <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <!-- ============ RIGHT: the list of repair jobs ============ -->
+    <section class="jobs" aria-labelledby="jobs-heading">
+      <div class="jobs__header">
+        <h2 id="jobs-heading" tabindex="-1">Repair jobs</h2>
+        <p id="job-count" class="jobs__count"></p>
+      </div>
+
+      <p id="empty-message" class="empty" hidden>
+        No repair jobs yet. Use the form to report the first one.
+      </p>
+
+      <!-- Job cards are inserted here by js/ui-jobs.js (newest first) -->
+      <div id="job-list" class="job-list"></div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Meadow House is a fictional house. Jobs are saved in this browser only, so they stay after a refresh but are not shared with other devices.</p>
+    </div>
+  </footer>
+
+  <!--
+    Scripts: loaded in dependency order (each one uses the ones above it).
+    "defer" means they run after the page has been read, in this order.
+  -->
+  <script defer src="js/config.js"></script>      <!-- fixed values            -->
+  <script defer src="js/validation.js"></script>  <!-- input rules             -->
+  <script defer src="js/jobs.js"></script>        <!-- job business rules      -->
+  <script defer src="js/storage.js"></script>     <!-- localStorage saving     -->
+  <script defer src="js/format.js"></script>      <!-- date/text formatting    -->
+  <script defer src="js/dom.js"></script>         <!-- safe element builders   -->
+  <script defer src="js/ui-form.js"></script>     <!-- report form behaviour   -->
+  <script defer src="js/ui-jobs.js"></script>     <!-- job cards and updates   -->
+  <script defer src="js/app.js"></script>         <!-- starts everything       -->
+</body>
+</html>

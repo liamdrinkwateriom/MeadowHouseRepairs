@@ -1,0 +1,598 @@
+/* ==================================================================
+   Meadow House Repairs - styles
+   ------------------------------------------------------------------
+   Sections:
+     1. Design tokens (colours, spacing)  - change the look here
+     2. Base / reset
+     3. Layout
+     4. Header and footer
+     5. Forms and buttons
+     6. Job cards, badges and history
+     7. Messages (errors, confirmations)
+     8. Small screens (mobile)
+
+   Accessibility notes:
+     - Body text is 16px; the smallest text (hints, meta) is 14px.
+     - Text colours are at least 4.5:1 against their background.
+     - Control borders are at least 3:1 against the page.
+     - Keyboard focus is shown with a thick blue outline everywhere.
+   ================================================================== */
+
+
+/* ---------- 1. Design tokens ---------------------------------------- */
+:root {
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Surfaces and text */
+  --page-bg: #f3f5f2;
+  --surface: #ffffff;
+  --text: #1b261f;
+  --text-muted: #46564c;       /* hints and meta text (about 7:1 on white) */
+
+  /* Borders */
+  --border-control: #6f7f75;   /* inputs, buttons (>= 3:1 on white)         */
+  --border-soft: #cfd8d2;      /* decorative dividers only                   */
+
+  /* Brand green (buttons, header) */
+  --brand: #1d5c3d;
+  --brand-dark: #14452d;
+  --on-brand: #ffffff;
+
+  /* Keyboard focus ring */
+  --focus: #0b57d0;
+
+  /* Urgent / errors */
+  --danger: #a31616;
+  --danger-bg: #fdecec;
+
+  /* Status badge colours (text and background pairs, all >= 4.5:1) */
+  --status-new-bg: #e3effb;
+  --status-new-text: #0c3b69;
+  --status-progress-bg: #fff1c7;
+  --status-progress-text: #5a3f00;
+  --status-done-bg: #dcf3e3;
+  --status-done-text: #10492a;
+
+  --success-bg: #e8f5ec;
+  --success-text: #10492a;
+
+  --radius: 8px;
+  --gap: 1rem;
+}
+
+
+/* ---------- 2. Base / reset ----------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;               /* respects the person's browser text size */
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 1rem;               /* 16px */
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--page-bg);
+}
+
+h1, h2, h3, h4 {
+  line-height: 1.25;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+/* One consistent, highly visible keyboard focus ring. */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Typed text: keep line breaks, and wrap very long words so nothing overflows. */
+.plain {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* "Skip to repair jobs" link: hidden until a keyboard user tabs to it. */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -4rem;
+  padding: 0.6rem 1rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--brand);
+  border-radius: var(--radius);
+  z-index: 10;
+}
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+
+/* ---------- 3. Layout ----------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: 75rem;              /* 1200px */
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Mobile first: one column. Two columns from 960px (see below). */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+  align-items: start;
+}
+
+.layout__notice {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 60rem) {
+  .layout {
+    grid-template-columns: minmax(0, 22.5rem) minmax(0, 1fr);
+  }
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.panel h2 {
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+}
+
+
+/* ---------- 4. Header and footer ------------------------------------ */
+.site-header {
+  background: var(--brand);
+  color: var(--on-brand);
+  padding: 1.25rem 0;
+}
+
+.site-header h1 {
+  font-size: 1.75rem;
+}
+
+.site-header__intro {
+  margin-top: 0.25rem;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border-soft);
+  padding: 1rem 0 2rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;             /* 14.4px */
+}
+
+
+/* ---------- 5. Forms and buttons ------------------------------------ */
+.field {
+  margin-bottom: 1.1rem;
+}
+
+label,
+legend {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  padding: 0;
+}
+
+.hint {
+  font-size: 0.9rem;             /* 14.4px: secondary instructions */
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+input[type="text"],
+textarea {
+  display: block;
+  width: 100%;
+  font: inherit;                 /* 16px, also stops iOS zooming on focus */
+  color: var(--text);
+  background: var(--surface);
+  border: 2px solid var(--border-control);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.75rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 5.5rem;
+}
+
+/* Fields with an error get a red border (the message itself carries the meaning). */
+[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+/* Priority radio buttons */
+.fieldset {
+  border: 0;
+  padding: 0;
+  margin-left: 0;
+  margin-right: 0;
+  min-width: 0;
+}
+
+.radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;           /* comfortable touch target */
+  padding: 0 0.9rem 0 0.75rem;
+  border: 2px solid var(--border-control);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.radio input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  accent-color: var(--brand);
+}
+
+.radio label {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  min-height: 2.75rem;           /* 44px touch target */
+  padding: 0.6rem 1.1rem;
+  font: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  border: 2px solid var(--brand);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.btn--primary {
+  background: var(--brand);
+  color: var(--on-brand);
+}
+.btn--primary:hover {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+}
+
+.btn--secondary {
+  background: var(--surface);
+  color: var(--brand);
+}
+.btn--secondary:hover {
+  background: #e8f1ec;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+
+/* ---------- 6. Job cards, badges and history ------------------------ */
+.jobs__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.jobs__header h2 {
+  font-size: 1.35rem;
+}
+
+.jobs__count {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.empty {
+  background: var(--surface);
+  border: 2px dashed var(--border-control);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.job-list {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.job {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-left: 6px solid var(--border-control);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  min-width: 0;                  /* lets long text wrap inside grid */
+}
+
+/* Left stripe is an extra cue; the words "Status:" and "Priority:" carry the meaning. */
+.job--new         { border-left-color: var(--status-new-text); }
+.job--in-progress { border-left-color: #b07d00; }
+.job--completed   { border-left-color: var(--brand); }
+.job--urgent      { border-left-color: var(--danger); }
+
+.job__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.job__title {
+  font-size: 1.2rem;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.badge--status-new         { background: var(--status-new-bg);      color: var(--status-new-text); }
+.badge--status-in-progress { background: var(--status-progress-bg); color: var(--status-progress-text); }
+.badge--status-completed   { background: var(--status-done-bg);     color: var(--status-done-text); }
+
+.badge--urgent {
+  background: var(--danger);
+  color: #ffffff;
+}
+.badge--normal {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border-control);
+}
+
+/* Label/value pairs */
+.job__details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem 1rem;
+  margin: 0 0 1rem;
+}
+
+.detail {
+  min-width: 0;
+}
+
+.detail--wide {
+  grid-column: 1 / -1;
+}
+
+.detail dt {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.detail dd {
+  margin: 0;
+}
+
+/* Latest progress note / completion note */
+.note-block {
+  background: #f6f8f6;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.note-block--done {
+  background: var(--success-bg);
+  border-color: var(--brand);
+}
+
+.note-block h4 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.meta {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Update area */
+.actions {
+  border-top: 1px solid var(--border-soft);
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.actions h4 {
+  font-size: 1.05rem;
+}
+
+.action-group,
+.job-form {
+  min-width: 0;
+}
+
+.job-form .btn {
+  margin-top: 0.6rem;
+}
+
+/* History */
+.history {
+  border-top: 1px solid var(--border-soft);
+  padding-top: 0.75rem;
+}
+
+.history summary {
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.35rem 0;
+}
+
+.history__list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.history__item {
+  border-left: 3px solid var(--border-soft);
+  padding-left: 0.75rem;
+  min-width: 0;
+}
+
+.history__when {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.history__title {
+  font-weight: 700;
+}
+
+.history__note {
+  margin-top: 0.15rem;
+}
+
+
+/* ---------- 7. Messages (errors, confirmations) --------------------- */
+.error {
+  margin-top: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-left: 4px solid var(--danger);
+  border-radius: 4px;
+  font-weight: 600;
+}
+/* The HTML "hidden" attribute must win over the display set above. */
+.error[hidden],
+.empty[hidden],
+.notice[hidden] {
+  display: none;
+}
+
+.notice {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.notice--error {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 2px solid var(--danger);
+}
+
+/* Message under the Submit button */
+.form-status:empty {
+  display: none;
+}
+
+.form-status {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.form-status--success {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 2px solid var(--brand);
+}
+
+.form-status--success a {
+  color: var(--brand);
+}
+
+.form-status--error {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 2px solid var(--danger);
+}
+
+/* Message at the top of a job card after an update */
+.feedback {
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.feedback--success {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 2px solid var(--brand);
+}
+
+.feedback--error {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 2px solid var(--danger);
+}
+
+
+/* ---------- 8. Small screens (phones) ------------------------------- */
+@media (max-width: 30rem) {
+  .panel,
+  .job {
+    padding: 1rem;
+  }
+
+  /* Full-width buttons are easier to tap. */
+  .job-form .btn,
+  .action-group .btn {
+    width: 100%;
+  }
+
+  .radio-row {
+    flex-direction: column;
+  }
+}
