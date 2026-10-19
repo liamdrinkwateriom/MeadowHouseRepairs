@@ -1,0 +1,1158 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f3a4d">
+  <title>Home – Meadow House Repairs</title>
+  <style>
+:root {
+  --bg: #eaf1fa;
+  --surface: #ffffff;
+  --ink: #1b2a38;
+  --muted: #475569;
+  --line: #cfd9e4;
+  --input-border: #5b6b7b;
+
+  --navy: #0f3a4d;
+  --blue: #0b5cab;
+  --blue-dark: #08437f;
+  --teal: #0f766e;
+  --green: #166534;
+  --purple: #5b21b6;
+  --danger: #b42318;
+  --focus: #0b57d0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  background-color: var(--bg);
+  background-image: linear-gradient(180deg, #dbe9f8 0, #eaf1fa 280px, #e9f5f0 100%);
+  background-attachment: fixed;
+  color: var(--ink);
+}
+main { flex: 1; width: 100%; }
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -100px;
+  background: #fff;
+  color: var(--ink);
+  padding: 8px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  z-index: 10;
+}
+.skip-link:focus { top: 8px; }
+
+/* App bar */
+.app-bar {
+  position: relative;
+  background-color: var(--navy);
+  background-image: linear-gradient(100deg, #0f3a4d 0%, #0b5cab 60%, #0f766e 100%);
+  color: #fff;
+  padding-bottom: 6px;
+  margin-bottom: 20px;
+}
+.app-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #f59e0b, #f472b6, #a78bfa, #38bdf8, #34d399);
+}
+.app-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.brand { min-width: 0; }
+.brand h1 { margin: 0; font-size: 1.5rem; line-height: 1.2; font-weight: 700; }
+.brand p { margin: 0; font-size: 0.95rem; color: #e0f2fe; }
+.house-chip {
+  margin: 0;
+  flex: none;
+  padding: 4px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+h2 { margin: 0 0 12px; font-size: 1.2rem; line-height: 1.3; color: var(--navy); }
+h3 { margin: 0; font-size: 1.1rem; line-height: 1.3; }
+h4 { margin: 16px 0 8px; font-size: 1rem; color: var(--navy); }
+
+/* Summary strip */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media (min-width: 700px) {
+  .summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.tile {
+  --tone: var(--blue);
+  --wash: #e3effc;
+  background: var(--wash);
+  border: 1px solid var(--tone);
+  border-top: 6px solid var(--tone);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.tile p { margin: 0; }
+.tile-num { font-size: 2rem; font-weight: 700; line-height: 1.2; color: var(--tone); }
+.tile-label { font-size: 0.95rem; color: #1f2d3a; font-weight: 600; }
+.tile-new { --tone: #0b5cab; --wash: #e3effc; }
+.tile-progress { --tone: #8a5300; --wash: #fff1cc; }
+.tile-completed { --tone: #166534; --wash: #dff3e6; }
+.tile-urgent { --tone: #b42318; --wash: #fde8e6; }
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  padding-bottom: 32px;
+}
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.panel {
+  --band: #e3effc;
+  --band-ink: #08437f;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 18px 18px;
+  min-width: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(15, 58, 77, 0.1);
+}
+.panel-report { --band: #fff1cc; --band-ink: #6b3f00; border-top: 6px solid #f59e0b; }
+.panel-jobs { --band: #ebe7fb; --band-ink: #3b2a8f; border-top: 6px solid #6d4fd6; }
+.panel > h2 {
+  margin: 0 -18px 14px;
+  padding: 12px 18px;
+  background: var(--band);
+  color: var(--band-ink);
+  border-bottom: 1px solid var(--line);
+}
+
+.house-line { margin: 0 0 12px; color: var(--muted); }
+.house-line strong {
+  color: #0b4f4a;
+  background: #d5f3ee;
+  padding: 1px 10px;
+  border-radius: 999px;
+}
+
+/* Forms */
+.field { margin-bottom: 14px; }
+.field.inline { display: flex; align-items: center; gap: 8px; margin: 0; }
+label { display: block; font-weight: 600; margin-bottom: 4px; }
+.field.inline label { margin: 0; }
+.hint { margin: 0 0 6px; color: var(--muted); font-size: 0.9rem; }
+
+textarea, input[type="text"], select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  min-height: 44px;
+}
+.field.inline select { width: auto; }
+textarea { resize: vertical; }
+
+[aria-invalid="true"] {
+  border: 2px solid var(--danger);
+  background: #fff6f5;
+}
+
+.field-error {
+  margin: 6px 0 0;
+  color: var(--danger);
+  font-weight: 600;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Buttons */
+.btn {
+  font: inherit;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 2px solid var(--blue);
+  cursor: pointer;
+}
+.btn.primary { background: var(--blue); color: #fff; }
+.btn.primary:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
+.btn.secondary { background: #fff; color: var(--blue); }
+.btn.secondary:hover { background: #dbeafe; }
+.btn.success { background: var(--green); border-color: var(--green); color: #fff; }
+.btn.success:hover { background: #124d28; border-color: #124d28; }
+
+/* Messages */
+.message { margin: 0 0 14px; }
+.message:empty { display: none; }
+.message, .feedback {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border-left: 6px solid;
+  overflow-wrap: anywhere;
+}
+.success { background: #dcf3e4; border-color: var(--green); color: #14391f; }
+.error { background: #fde3e0; border-color: var(--danger); color: #7a1c14; }
+.message a { color: inherit; font-weight: 600; }
+
+.banner {
+  background: #fff4d6;
+  border: 2px solid #7a4b00;
+  color: #4a2c00;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+/* Job list */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+}
+.count { margin: 0; color: #3b2a8f; font-weight: 600; }
+.empty {
+  color: #3b2a8f;
+  background: #f3f0fd;
+  border: 2px dashed #8b73e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px 0;
+}
+
+.job {
+  --accent: var(--blue);
+  --tint: #e3effc;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 8px solid var(--accent);
+  border-radius: 10px;
+  padding: 0 16px 16px;
+  margin-bottom: 16px;
+  min-width: 0;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(15, 58, 77, 0.1);
+}
+.job.status-new { --accent: #0b5cab; --tint: #e3effc; }
+.job.status-in-progress { --accent: #d98a00; --tint: #fff1cc; }
+.job.status-completed { --accent: #2e9e5b; --tint: #dff3e6; }
+.job.is-urgent { border-top: 4px solid var(--danger); }
+
+.job-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 -16px 12px;
+  padding: 10px 16px;
+  background: var(--tint);
+  border-bottom: 1px solid var(--line);
+}
+.job-header h3 { margin-right: auto; color: #14232f; }
+
+.badge {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+.badge.status-new { background: #0b5cab; color: #fff; border-color: #08437f; }
+.badge.status-in-progress { background: #fbbf24; color: #3b2300; border-color: #8a5300; }
+.badge.status-completed { background: #166534; color: #fff; border-color: #124d28; }
+.badge.priority-normal { background: #fff; color: #334155; border-color: #64748b; }
+.badge.priority-urgent { background: var(--danger); color: #fff; border-color: #7a1c14; }
+
+.feedback { margin: 0 0 12px; }
+
+.details { margin: 0; }
+.details div { margin-bottom: 8px; }
+.details dt { font-weight: 700; color: var(--teal); font-size: 0.95rem; }
+.details dd { margin: 0; }
+
+.user-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* History timeline */
+.history { list-style: none; margin: 0; padding: 0 0 0 4px; }
+.history li {
+  position: relative;
+  margin: 0 0 0 7px;
+  padding: 0 0 12px 20px;
+  border-left: 3px solid var(--line);
+}
+.history li:last-child { padding-bottom: 0; border-left-color: transparent; }
+.history li::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 4px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--dot, var(--muted));
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--dot, var(--muted));
+}
+.history li.hist-created { --dot: #0b5cab; }
+.history li.hist-status { --dot: #d98a00; }
+.history li.hist-note { --dot: #7c3aed; }
+.history li.hist-completed { --dot: #2e9e5b; }
+.hist-time { display: block; color: var(--muted); font-size: 0.95rem; }
+.hist-label { font-weight: 700; }
+.hist-created .hist-label { color: #08437f; }
+.hist-status .hist-label { color: #7a4700; }
+.hist-note .hist-label { color: var(--purple); }
+.hist-completed .hist-label { color: #145a32; }
+
+.actions {
+  margin-top: 16px;
+  padding-top: 2px;
+  border-top: 2px dashed var(--line);
+}
+.update-form {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--input-border);
+  border-radius: 8px;
+}
+.update-form.progress-form { background: #ebe7fb; border-color: #a592ec; border-left-color: #6d4fd6; }
+.update-form.complete-form { background: #e2f4e8; border-color: #8fcfa4; border-left-color: #2e9e5b; }
+.update-form .field { margin-bottom: 10px; }
+.done-note {
+  color: #14391f;
+  background: #dcf3e4;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 14px 0 0;
+}
+
+/* Footer */
+.app-footer {
+  background: #d3e2f3;
+  border-top: 1px solid #a9c1db;
+  color: #2b3b4b;
+  padding: 12px 0;
+}
+.app-footer p { margin: 0; font-size: 0.95rem; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .panel { padding: 0 14px 14px; }
+  .panel > h2 { margin: 0 -14px 14px; padding: 12px 14px; }
+  .btn { width: 100%; }
+  .brand h1 { font-size: 1.25rem; }
+  .house-chip { padding: 2px 10px; }
+}
+
+/* Pages and navigation */
+.app-bar-inner { flex-wrap: wrap; }
+.main-nav {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+.nav-link:hover { background: rgba(255, 255, 255, 0.2); }
+.nav-link[aria-current="page"] { background: #fff; color: var(--navy); border-color: #fff; }
+.nav-link:focus-visible, .skip-link:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+.view[hidden] { display: none; }
+.narrow { max-width: 720px; margin: 0 auto; }
+.panel-home { --band: #e3effc; --band-ink: #08437f; border-top: 6px solid var(--blue); margin-bottom: 20px; }
+.lead { margin: 0 0 16px; font-size: 1.1rem; }
+.actions-row { display: flex; flex-wrap: wrap; gap: 12px; }
+a.btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; text-align: center; }
+h2:focus, main:focus { outline: none; }
+h2:focus-visible, main:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+</style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="app-bar">
+    <div class="wrap app-bar-inner">
+      <div class="brand">
+        <h1>Meadow House Repairs</h1>
+        <p>Maintenance log</p>
+      </div>
+      <p class="house-chip">Meadow House</p>
+      <nav class="main-nav" aria-label="Main">
+        <a class="nav-link" href="#home" data-view="home">Home</a>
+        <a class="nav-link" href="#report" data-view="report">Report a repair</a>
+        <a class="nav-link" href="#progress" data-view="progress">Check progress</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="main" tabindex="-1">
+    <div id="storage-warning" class="banner" role="alert" hidden>
+      Your changes could not be saved in this browser, so they will be lost when the page is refreshed.
+    </div>
+    <noscript><p class="banner">This app needs JavaScript to be turned on.</p></noscript>
+
+    <!-- HOME -->
+    <section id="view-home" class="view" aria-labelledby="home-heading">
+      <div class="panel panel-home">
+        <h2 id="home-heading" tabindex="-1">Welcome to Meadow House Repairs</h2>
+        <p class="lead">Report a repair that needs doing, then check what has been done and when.</p>
+        <div class="actions-row">
+          <a class="btn primary" href="#report">Report a repair</a>
+          <a class="btn secondary" href="#progress">Check progress</a>
+        </div>
+      </div>
+
+      <section class="summary" role="group" aria-label="Job summary">
+        <div class="tile tile-new">
+          <p class="tile-num" id="sum-new">0</p>
+          <p class="tile-label">New</p>
+        </div>
+        <div class="tile tile-progress">
+          <p class="tile-num" id="sum-progress">0</p>
+          <p class="tile-label">In Progress</p>
+        </div>
+        <div class="tile tile-completed">
+          <p class="tile-num" id="sum-completed">0</p>
+          <p class="tile-label">Completed</p>
+        </div>
+        <div class="tile tile-urgent">
+          <p class="tile-num" id="sum-urgent">0</p>
+          <p class="tile-label">Urgent and not completed</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- REPORT -->
+    <section id="view-report" class="view" aria-labelledby="report-heading" hidden>
+      <div class="panel panel-report narrow">
+        <h2 id="report-heading" tabindex="-1">Report a repair</h2>
+        <p class="house-line">House: <strong>Meadow House</strong></p>
+
+        <div id="form-message" class="message" role="status" tabindex="-1"></div>
+
+        <form id="report-form" novalidate>
+          <div class="field">
+            <label for="description">Description of the repair (required)</label>
+            <p class="hint" id="description-hint">For example: Garden fence damaged.</p>
+            <textarea id="description" name="description" rows="4" maxlength="1000"
+              data-hint="description-hint" aria-describedby="description-hint"></textarea>
+            <p class="field-error" id="description-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="reporter">Reporter name (required)</label>
+            <input id="reporter" name="reporter" type="text" maxlength="100" autocomplete="off">
+            <p class="field-error" id="reporter-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority">
+              <option value="Normal">Normal</option>
+              <option value="Urgent">Urgent</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn primary">Submit repair report</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- PROGRESS -->
+    <section id="view-progress" class="view" aria-labelledby="jobs-heading" hidden>
+      <div class="panel panel-jobs">
+        <h2 id="jobs-heading" tabindex="-1">Check progress of repairs</h2>
+
+        <div class="toolbar">
+          <div class="field inline">
+            <label for="filter">Show</label>
+            <select id="filter">
+              <option value="all">All jobs</option>
+              <option value="New">New</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <p id="job-count" class="count"></p>
+        </div>
+
+        <div id="job-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="wrap">
+      <p>Training and demonstration use only. Enter fictional information only: never real residents, staff or care records.</p>
+    </div>
+  </footer>
+
+  <script>
+/* Meadow House Repairs
+ * Plain JavaScript, no framework. Data is kept in browser localStorage.
+ * All user-typed text is added to the page with textContent / text nodes,
+ * never innerHTML, so HTML-looking text is shown literally.
+ */
+(function () {
+  'use strict';
+
+  const STORAGE_KEY = 'meadowHouseRepairs.v1';
+  const HOUSE_NAME = 'Meadow House';
+  const PRIORITIES = ['Normal', 'Urgent'];
+  const STATUSES = ['New', 'In Progress', 'Completed'];
+
+  const dateFmt = new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+  });
+
+  // ---------- State and storage ----------
+
+  let storageOk = true;
+  let state = loadState();
+  const drafts = new Map();    // job id -> { progress, completion } unsent text
+  const feedback = new Map();  // job id -> { kind, text } last result shown on the card
+
+  function emptyState() {
+    return { version: 1, nextNumber: 1, jobs: [] };
+  }
+
+  function cleanJob(j) {
+    if (!j || typeof j !== 'object') return null;
+    if (typeof j.id !== 'string' || typeof j.description !== 'string' ||
+        typeof j.reporter !== 'string' || typeof j.createdAt !== 'string') return null;
+    if (!PRIORITIES.includes(j.priority) || !STATUSES.includes(j.status)) return null;
+    const history = Array.isArray(j.history)
+      ? j.history
+          .filter((e) => e && typeof e.at === 'string' && typeof e.type === 'string')
+          .map((e) => ({
+            type: e.type,
+            status: typeof e.status === 'string' ? e.status : '',
+            text: typeof e.text === 'string' ? e.text : '',
+            at: e.at
+          }))
+      : [];
+    return {
+      id: j.id,
+      house: HOUSE_NAME,
+      description: j.description,
+      reporter: j.reporter,
+      priority: j.priority,
+      status: j.status,
+      createdAt: j.createdAt,
+      completionNote: typeof j.completionNote === 'string' ? j.completionNote : '',
+      completedAt: typeof j.completedAt === 'string' ? j.completedAt : '',
+      history
+    };
+  }
+
+  function loadState() {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) return emptyState();
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.jobs)) return emptyState();
+      const jobs = parsed.jobs.map(cleanJob).filter(Boolean);
+      let next = Number.isInteger(parsed.nextNumber) ? parsed.nextNumber : 1;
+      jobs.forEach((j) => {
+        const m = /^MH-(\d+)$/.exec(j.id);
+        if (m) next = Math.max(next, parseInt(m[1], 10) + 1);
+      });
+      return { version: 1, nextNumber: next, jobs };
+    } catch (e) {
+      return emptyState();
+    }
+  }
+
+  function saveState() {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      storageOk = true;
+    } catch (e) {
+      storageOk = false;
+    }
+    storageWarning.hidden = storageOk;
+  }
+
+  function allocateId() {
+    let n = state.nextNumber;
+    let id;
+    do {
+      id = 'MH-' + String(n).padStart(4, '0');
+      n += 1;
+    } while (state.jobs.some((j) => j.id === id));
+    state.nextNumber = n;
+    return id;
+  }
+
+  function findJob(id) {
+    return state.jobs.find((j) => j.id === id);
+  }
+
+  function nowIso() {
+    return new Date().toISOString();
+  }
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? iso : dateFmt.format(d);
+  }
+
+  function latestProgressNote(job) {
+    for (let i = job.history.length - 1; i >= 0; i--) {
+      if (job.history[i].type === 'note') return job.history[i];
+    }
+    return null;
+  }
+
+  // ---------- DOM helpers ----------
+
+  function h(tag, props, ...kids) {
+    const node = document.createElement(tag);
+    if (props) {
+      Object.keys(props).forEach((k) => {
+        const v = props[k];
+        if (v === null || v === undefined || v === false) return;
+        if (k === 'class') node.className = v;
+        else if (k === 'text') node.textContent = v;
+        else if (k.indexOf('on') === 0) node.addEventListener(k.slice(2), v);
+        else node.setAttribute(k, v === true ? '' : v);
+      });
+    }
+    kids.flat().forEach((kid) => {
+      if (kid !== null && kid !== undefined) node.append(kid); // strings become text nodes
+    });
+    return node;
+  }
+
+  function showError(input, errEl, message) {
+    errEl.textContent = 'Error: ' + message;
+    errEl.hidden = false;
+    input.setAttribute('aria-invalid', 'true');
+    const hint = input.dataset.hint;
+    input.setAttribute('aria-describedby', (hint ? hint + ' ' : '') + errEl.id);
+  }
+
+  function clearError(input, errEl) {
+    errEl.textContent = '';
+    errEl.hidden = true;
+    input.removeAttribute('aria-invalid');
+    const hint = input.dataset.hint;
+    if (hint) input.setAttribute('aria-describedby', hint);
+    else input.removeAttribute('aria-describedby');
+  }
+
+  function setDraft(id, key, value) {
+    const d = drafts.get(id) || { progress: '', completion: '' };
+    d[key] = value;
+    drafts.set(id, d);
+  }
+
+  // ---------- Page elements ----------
+
+  const form = document.getElementById('report-form');
+  const descEl = document.getElementById('description');
+  const descErr = document.getElementById('description-error');
+  const repEl = document.getElementById('reporter');
+  const repErr = document.getElementById('reporter-error');
+  const prioEl = document.getElementById('priority');
+  const formMessage = document.getElementById('form-message');
+  const listEl = document.getElementById('job-list');
+  const filterEl = document.getElementById('filter');
+  const countEl = document.getElementById('job-count');
+  const storageWarning = document.getElementById('storage-warning');
+
+  // ---------- Rendering ----------
+
+  function statusClass(status) {
+    return 'status-' + status.toLowerCase().replace(/\s+/g, '-');
+  }
+
+  function historyLabel(entry) {
+    if (entry.type === 'note') return 'Progress note';
+    return entry.status || 'Update';
+  }
+
+  function detailRow(label, valueNode) {
+    return h('div', null, h('dt', { text: label }), h('dd', null, valueNode));
+  }
+
+  function textValue(text) {
+    return h('span', { class: 'user-text', text });
+  }
+
+  function buildCard(job) {
+    const id = job.id;
+    const draft = drafts.get(id) || { progress: '', completion: '' };
+    const titleId = 'job-title-' + id;
+
+    const card = h('article', {
+      class: 'job ' + statusClass(job.status) + (job.priority === 'Urgent' ? ' is-urgent' : '') +
+        (job.status === 'Completed' ? ' is-completed' : ''),
+      id: 'job-' + id,
+      'data-job-id': id,
+      'aria-labelledby': titleId,
+      tabindex: '-1'
+    });
+
+    card.append(
+      h('div', { class: 'job-header' },
+        h('h3', { id: titleId, text: 'Job ' + id }),
+        h('span', { class: 'badge ' + statusClass(job.status), text: job.status }),
+        h('span', {
+          class: 'badge priority-' + job.priority.toLowerCase(),
+          text: job.priority + ' priority'
+        })
+      )
+    );
+
+    const fb = feedback.get(id);
+    if (fb) {
+      card.append(h('p', {
+        class: 'feedback ' + fb.kind,
+        id: 'feedback-' + id,
+        role: 'status',
+        tabindex: '-1',
+        text: fb.text
+      }));
+    }
+
+    const note = latestProgressNote(job);
+    const details = h('dl', { class: 'details' },
+      detailRow('Description', textValue(job.description)),
+      detailRow('Reported by', textValue(job.reporter)),
+      detailRow('House', textValue(job.house)),
+      detailRow('Reported on', h('time', { datetime: job.createdAt, text: formatDate(job.createdAt) })),
+      detailRow('Latest progress note', note
+        ? textValue(note.text)
+        : h('span', { class: 'user-text', text: 'No progress notes yet.' }))
+    );
+    if (job.status === 'Completed') {
+      details.append(
+        detailRow('Completion note', textValue(job.completionNote)),
+        detailRow('Completed on', h('time', { datetime: job.completedAt, text: formatDate(job.completedAt) }))
+      );
+    }
+    card.append(details);
+
+    const list = h('ol', { class: 'history' });
+    job.history.forEach((entry) => {
+      list.append(h('li', { class: 'hist-' + String(entry.type).replace(/[^a-z]/g, '') },
+        h('span', { class: 'hist-time' }, h('time', { datetime: entry.at, text: formatDate(entry.at) })),
+        h('span', { class: 'hist-label', text: historyLabel(entry) }),
+        ' \u2013 ',
+        h('span', { class: 'user-text', text: entry.text })
+      ));
+    });
+    card.append(h('h4', { text: 'History' }), list);
+
+    if (job.status === 'Completed') {
+      card.append(h('p', { class: 'done-note', text: 'This job is completed. No further updates are needed.' }));
+      return card;
+    }
+
+    const actions = h('section', { class: 'actions' }, h('h4', { text: 'Update this job' }));
+
+    if (job.status === 'New') {
+      actions.append(h('button', {
+        type: 'button',
+        class: 'btn secondary',
+        text: 'Move to In Progress',
+        onclick: () => moveToInProgress(id)
+      }));
+    }
+
+    // Progress note form
+    const progId = 'progress-' + id;
+    const progErr = h('p', { class: 'field-error', id: progId + '-error', hidden: true });
+    const progArea = h('textarea', {
+      id: progId, rows: '3', maxlength: '1000', 'data-hint': progId + '-hint',
+      'aria-describedby': progId + '-hint'
+    });
+    progArea.value = draft.progress;
+    progArea.addEventListener('input', () => {
+      setDraft(id, 'progress', progArea.value);
+      clearError(progArea, progErr);
+    });
+    const progForm = h('form', { class: 'update-form progress-form', novalidate: true },
+      h('div', { class: 'field' },
+        h('label', { for: progId, text: 'Progress note (required)' }),
+        h('p', { class: 'hint', id: progId + '-hint', text: 'What has been done so far?' }),
+        progArea,
+        progErr
+      ),
+      h('button', { type: 'submit', class: 'btn secondary', text: 'Save progress note' })
+    );
+    progForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      saveProgressNote(id, progArea, progErr);
+    });
+    actions.append(progForm);
+
+    // Completion form
+    const compId = 'completion-' + id;
+    const compErr = h('p', { class: 'field-error', id: compId + '-error', hidden: true });
+    const compArea = h('textarea', {
+      id: compId, rows: '3', maxlength: '1000', 'data-hint': compId + '-hint',
+      'aria-describedby': compId + '-hint'
+    });
+    compArea.value = draft.completion;
+    compArea.addEventListener('input', () => {
+      setDraft(id, 'completion', compArea.value);
+      clearError(compArea, compErr);
+    });
+    const compForm = h('form', { class: 'update-form complete-form', novalidate: true },
+      h('div', { class: 'field' },
+        h('label', { for: compId, text: 'Completion note (required)' }),
+        h('p', { class: 'hint', id: compId + '-hint', text: 'Explain what was done to finish this repair.' }),
+        compArea,
+        compErr
+      ),
+      h('button', { type: 'submit', class: 'btn success', text: 'Mark as Completed' })
+    );
+    compForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      completeJob(id, compArea, compErr);
+    });
+    actions.append(compForm);
+
+    card.append(actions);
+    return card;
+  }
+
+  function updateSummary() {
+    const counts = { 'New': 0, 'In Progress': 0, 'Completed': 0 };
+    let urgentOpen = 0;
+    state.jobs.forEach((j) => {
+      counts[j.status] += 1;
+      if (j.priority === 'Urgent' && j.status !== 'Completed') urgentOpen += 1;
+    });
+    document.getElementById('sum-new').textContent = counts['New'];
+    document.getElementById('sum-progress').textContent = counts['In Progress'];
+    document.getElementById('sum-completed').textContent = counts['Completed'];
+    document.getElementById('sum-urgent').textContent = urgentOpen;
+  }
+
+  function renderCard(job, focusFeedback) {
+    const fresh = buildCard(job);
+    const old = document.getElementById('job-' + job.id);
+    if (old) old.replaceWith(fresh);
+    else listEl.prepend(fresh);
+    updateSummary();
+    if (focusFeedback) {
+      const fb = fresh.querySelector('.feedback');
+      if (fb) fb.focus();
+    }
+  }
+
+  function renderList() {
+    const filter = filterEl.value;
+    const jobs = state.jobs
+      .slice()
+      .reverse()
+      .filter((j) => filter === 'all' || j.status === filter);
+
+    listEl.replaceChildren();
+    if (jobs.length === 0) {
+      listEl.append(h('p', {
+        class: 'empty',
+        text: state.jobs.length === 0
+          ? 'No repair jobs yet. Use the form to report a repair.'
+          : 'No jobs match this filter.'
+      }));
+    } else {
+      jobs.forEach((job) => listEl.append(buildCard(job)));
+    }
+    const total = state.jobs.length;
+    countEl.textContent = filter === 'all'
+      ? total + (total === 1 ? ' job saved' : ' jobs saved')
+      : 'Showing ' + jobs.length + ' of ' + total + (total === 1 ? ' job' : ' jobs');
+    updateSummary();
+  }
+
+  // ---------- Actions ----------
+
+  function setFeedback(id, kind, text) {
+    feedback.set(id, { kind, text });
+  }
+
+  function setFormMessage(kind, text, jobId) {
+    formMessage.className = 'message ' + kind;
+    formMessage.replaceChildren(text);
+    if (jobId) {
+      const link = h('a', { href: '#progress', text: 'View job ' + jobId + ' in Check progress' });
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        goToJob(jobId);
+      });
+      formMessage.append(' ', link);
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearError(descEl, descErr);
+    clearError(repEl, repErr);
+
+    const problems = [];
+    if (!descEl.value.trim()) {
+      showError(descEl, descErr,
+        'Enter a description of the repair. It cannot be empty or contain only spaces.');
+      problems.push(descEl);
+    }
+    if (!repEl.value.trim()) {
+      showError(repEl, repErr,
+        'Enter the reporter name. It cannot be empty or contain only spaces.');
+      problems.push(repEl);
+    }
+    if (problems.length > 0) {
+      setFormMessage('error',
+        'No repair was reported. Please fix the ' +
+        (problems.length === 1 ? 'problem' : 'problems') +
+        ' shown below. Anything valid you typed has been kept.');
+      problems[0].focus();
+      return;
+    }
+
+    state = loadState();
+    const now = nowIso();
+    const priority = prioEl.value === 'Urgent' ? 'Urgent' : 'Normal';
+    const job = {
+      id: allocateId(),
+      house: HOUSE_NAME,
+      description: descEl.value.trim(),
+      reporter: repEl.value.trim(),
+      priority,
+      status: 'New',
+      createdAt: now,
+      completionNote: '',
+      completedAt: '',
+      history: [{ type: 'created', status: 'New', text: 'Job created', at: now }]
+    };
+    state.jobs.push(job);
+    saveState();
+
+    form.reset();
+    prioEl.value = 'Normal';
+    filterEl.value = 'all';
+    renderList();
+    setFormMessage('success',
+      'Repair reported. Job ' + job.id + ' was created as New with ' + priority + ' priority.',
+      job.id);
+    formMessage.focus();
+  });
+
+  descEl.addEventListener('input', () => clearError(descEl, descErr));
+  repEl.addEventListener('input', () => clearError(repEl, repErr));
+  filterEl.addEventListener('change', renderList);
+
+  function reloadJob(id) {
+    state = loadState();
+    return findJob(id);
+  }
+
+  function moveToInProgress(id) {
+    const job = reloadJob(id);
+    if (!job) return;
+    if (job.status === 'New') {
+      job.history.push({
+        type: 'status', status: 'In Progress',
+        text: 'Status changed from New to In Progress', at: nowIso()
+      });
+      job.status = 'In Progress';
+      saveState();
+      setFeedback(id, 'success', 'Saved. Job ' + id + ' is now In Progress.');
+    } else {
+      setFeedback(id, 'error', 'Job ' + id + ' is already ' + job.status + ', so nothing was changed.');
+    }
+    renderCard(job, true);
+  }
+
+  function saveProgressNote(id, area, errEl) {
+    const text = area.value.trim();
+    if (!text) {
+      showError(area, errEl,
+        'Enter a progress note before saving. It cannot be empty or contain only spaces. Nothing was saved.');
+      area.focus();
+      return;
+    }
+    const job = reloadJob(id);
+    if (!job) return;
+    if (job.status === 'Completed') {
+      setFeedback(id, 'error', 'Job ' + id + ' is already Completed, so the note was not saved.');
+      renderCard(job, true);
+      return;
+    }
+    job.history.push({ type: 'note', status: job.status, text, at: nowIso() });
+    saveState();
+    setDraft(id, 'progress', '');
+    setFeedback(id, 'success', 'Saved. Progress note added to job ' + id + '. Status is ' + job.status + '.');
+    renderCard(job, true);
+  }
+
+  function completeJob(id, area, errEl) {
+    const text = area.value.trim();
+    const current = findJob(id);
+    if (!text) {
+      showError(area, errEl,
+        'Enter a completion note before marking this job Completed. It cannot be empty or contain only spaces. ' +
+        'The job is still ' + (current ? current.status : 'open') + ' and its notes and history are unchanged.');
+      area.focus();
+      return;
+    }
+    const job = reloadJob(id);
+    if (!job) return;
+    if (job.status === 'Completed') {
+      setFeedback(id, 'error', 'Job ' + id + ' is already Completed, so nothing was changed.');
+      renderCard(job, true);
+      return;
+    }
+    const now = nowIso();
+    job.history.push({ type: 'completed', status: 'Completed', text, at: now });
+    job.status = 'Completed';
+    job.completionNote = text;
+    job.completedAt = now;
+    saveState();
+    setDraft(id, 'completion', '');
+    setDraft(id, 'progress', '');
+    setFeedback(id, 'success', 'Saved. Job ' + id + ' is now Completed.');
+    renderCard(job, true);
+  }
+
+  // ---------- Pages (home / report / progress) ----------
+
+  const VIEWS = ['home', 'report', 'progress'];
+  const TITLES = { home: 'Home', report: 'Report a repair', progress: 'Check progress' };
+  let pendingJob = null;
+
+  function currentViewName() {
+    const n = window.location.hash.replace('#', '');
+    return VIEWS.includes(n) ? n : 'home';
+  }
+
+  function focusJob(id) {
+    const card = document.getElementById('job-' + id);
+    if (card) {
+      card.scrollIntoView({ block: 'start' });
+      card.focus();
+    }
+  }
+
+  function showView(initial) {
+    const name = currentViewName();
+    VIEWS.forEach((v) => { document.getElementById('view-' + v).hidden = v !== name; });
+    document.querySelectorAll('.nav-link').forEach((a) => {
+      if (a.dataset.view === name) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    document.title = TITLES[name] + ' \u2013 Meadow House Repairs';
+    if (pendingJob) {
+      focusJob(pendingJob);
+      pendingJob = null;
+      return;
+    }
+    if (!initial) {
+      window.scrollTo(0, 0);
+      const heading = document.querySelector('#view-' + name + ' h2');
+      if (heading) heading.focus();
+    }
+  }
+
+  function goToJob(id) {
+    filterEl.value = 'all';
+    renderList();
+    pendingJob = id;
+    if (currentViewName() === 'progress') showView(false);
+    else window.location.hash = '#progress';
+  }
+
+  document.querySelector('.skip-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('main').focus();
+  });
+  window.addEventListener('hashchange', () => showView(false));
+
+  // ---------- Start ----------
+
+  storageWarning.hidden = true;
+  renderList();
+  showView(true);
+})();
+
+</script>
+</body>
+</html>
