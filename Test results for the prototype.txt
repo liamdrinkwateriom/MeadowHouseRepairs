@@ -1,0 +1,25 @@
+Test results for the prototype:
+
+Test 1 - Success Maybe improve UI though?
+
+Test 2 - Success, gives valid error message
+
+Test 3 - Success, doesn't allow it to be made
+
+Test 4 - Success, both jobs are separate. Urgent listed first/separated.
+Given data: "John Doe", "Normal Report 1", Normal Priority. "John Doe", "Urgent Report 1", Urgent priority.
+However, while this is the case, it DOES clutter up the UI as it is large, so maybe adapt it so completed jobs have a dropdown rather
+than fully viewing them.
+
+Test 5 - Success, when given two jobs and one is edited, the other job isn't affected.
+Given data: "John Doe", "Fence Damaged", normal priority. "John Doe", "Kitchen Light Not Working", normal priority.
+
+Test 6 - Success
+
+Test 7 - Success, gives relevant error message
+
+Test 8 - Success
+
+Test 9 - Success, everything is retained
+
+Test 10 - Success
