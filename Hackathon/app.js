@@ -40,8 +40,8 @@
   /* ===== PIECES SHARED BY LIST AND DETAIL ===== */
   function badges(j) {
     return [
-      h('span', { 'class': 'badge' + (j.status === 'Completed' ? ' done' : j.status === 'In Progress' ? ' progress' : ''), text: 'Status: ' + j.status }),
-      h('span', { 'class': 'badge' + (j.priority === 'Urgent' ? ' urgent' : ''), text: j.priority + ' priority' })
+      h('span', { 'class': 'badge' + (j.status === 'New' ? ' new' : j.status === 'Completed' ? ' done' : j.status === 'In Progress' ? ' progress' : ''), text: 'Status: ' + j.status }),
+      h('span', { 'class': 'badge' + (j.priority === 'Urgent' ? ' urgent' : ' normal'), text: j.priority + ' priority' })
     ];
   }
   function facts(j) {
@@ -77,7 +77,8 @@
   function showList(focusId) {
     view.textContent = '';
     var visibleJobs = jobs.slice().reverse().filter(function (j) {
-      if (j.archived) return false;
+      if (j.archived && jobFilter.value !== 'Completed') return false;
+      if (jobFilter.value === 'urgent') return j.priority === 'Urgent';
       return jobFilter.value === 'all' || j.status === jobFilter.value;
     });
     visibleJobs.sort(function (a, b) {
@@ -100,16 +101,22 @@
       var open = h('button', { type: 'button', 'class': 'alt', text: 'Open job ' + j.id });
       open.onclick = function () { showJob(j.id); };
       var actions = h('div', { 'class': 'job-actions' }, open);
-      if (j.status === 'Completed') {
-        var archive = h('button', { type: 'button', 'class': 'alt archive-button', text: 'Remove from list' });
-        archive.setAttribute('aria-label', 'Remove completed job ' + j.id + ' from the list');
-        archive.onclick = function () {
-          j.archived = true;
-          save();
-          showList();
-        };
-        actions.appendChild(archive);
-      }
+      var remove = h('button', {
+        type: 'button',
+        'class': 'alt archive-button',
+        text: j.status === 'Completed'
+          ? (j.archived ? 'Restore to homepage' : 'Remove from homepage')
+          : 'Ignore'
+      });
+      remove.setAttribute('aria-label', j.status === 'Completed'
+        ? (j.archived ? 'Restore completed job ' + j.id + ' to the homepage' : 'Remove completed job ' + j.id + ' from the homepage')
+        : 'Ignore job ' + j.id + ' and remove it from the list');
+      remove.onclick = function () {
+        j.archived = j.status === 'Completed' ? !j.archived : true;
+        save();
+        showList();
+      };
+      actions.appendChild(remove);
       wrap.appendChild(h('article', { 'class': 'job' },
         h('div', { 'class': 'head' }, h('h3', { text: 'Job ' + j.id }), badges(j)[0], badges(j)[1]),
         facts(j), noteBox(j), actions));

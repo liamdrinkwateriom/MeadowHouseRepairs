@@ -3,24 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Meadow House Repairs</title>
+<title>Meadow House | Resident repairs</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="site-header">
-  <div class="brand">
-    <span class="brand-mark" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="m3.5 10 8.5-7 8.5 7v10.5h-17V10Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M9 20.5v-7h6v7M8 8.5h.01M16 8.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </span>
-    <div>
-      <p class="eyebrow">Resident services</p>
-      <h1>Meadow House Repairs</h1>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="m3.5 10 8.5-7 8.5 7v10.5h-17V10Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 20.5v-7h6v7M8 8.5h.01M16 8.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <div>
+        <p class="eyebrow">Resident portal <span aria-hidden="true">/</span> Home care</p>
+        <h1>Meadow House</h1>
+      </div>
     </div>
+    <div class="header-message">
+      <p class="header-kicker">A better way to get things fixed.</p>
+      <p class="sub">Report a repair, follow its progress, and keep your home running smoothly.</p>
+    </div>
+    <span class="header-index" aria-hidden="true">01 <i></i> 03</span>
   </div>
-  <p class="sub">A simple place to report a repair and keep up with its progress.</p>
 </header>
 
 <main>
@@ -65,8 +71,10 @@
           <span>Show</span>
           <select id="job-filter">
             <option value="all">All jobs</option>
+            <option value="New">New jobs</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
+            <option value="urgent">Urgent priority</option>
           </select>
         </label>
         <span class="live-label"><span aria-hidden="true"></span> Live updates</span>
