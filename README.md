@@ -6,7 +6,7 @@ A small browser app for reporting repairs at the fictional Meadow House, followi
 
 No installs, build step, server, account or API key is needed.
 
-1. Download or clone this repository.
+1. Download the Final App folder from this repository.
 2. Keep `index.html`, `styles.css` and `app.js` together in the same folder.
 3. Double-click `index.html` to open it in a modern browser (Chrome, Edge, Firefox or Safari).
 
