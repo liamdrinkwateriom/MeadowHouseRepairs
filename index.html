@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meadow House | Resident repairs</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="m3.5 10 8.5-7 8.5 7v10.5h-17V10Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 20.5v-7h6v7M8 8.5h.01M16 8.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <div>
+        <p class="eyebrow">Resident portal <span aria-hidden="true">/</span> Home care</p>
+        <h1>Meadow House</h1>
+      </div>
+    </div>
+    <div class="header-message">
+      <p class="header-kicker">A better way to get things fixed.</p>
+      <p class="sub">Report a repair, follow its progress, and keep your home running smoothly.</p>
+    </div>
+    <span class="header-index" aria-hidden="true">01 <i></i> 03</span>
+  </div>
+</header>
+
+<main>
+  <section class="panel" aria-labelledby="report-h">
+    <div class="section-heading">
+      <span class="section-icon" aria-hidden="true">+</span>
+      <div>
+        <p class="eyebrow">Let us know</p>
+        <h2 id="report-h">Report a repair</h2>
+      </div>
+    </div>
+    <p class="section-intro">Tell us what needs attention and our team will take it from there.</p>
+    <form id="report" novalidate>
+      <div class="field">
+        <label for="desc">Repair description</label>
+        <textarea id="desc" placeholder="For example, the kitchen tap is dripping" aria-describedby="desc-hint desc-err"></textarea>
+        <p class="hint" id="desc-hint">Include the room or area and a few details.</p>
+        <p class="err" id="desc-err"></p>
+      </div>
+      <div class="field">
+        <label for="reporter">Reporter name</label>
+        <input id="reporter" type="text" autocomplete="name" placeholder="Your name" aria-describedby="rep-err">
+        <p class="err" id="rep-err"></p>
+      </div>
+      <div class="field">
+        <label for="prio">Priority</label>
+        <select id="prio"><option>Normal</option><option>Urgent</option></select>
+      </div>
+      <button class="submit-button" type="submit">Submit report <span aria-hidden="true">→</span></button>
+      <div class="notice" id="create-msg" role="status" tabindex="-1"></div>
+    </form>
+  </section>
+
+  <section class="jobs-section" aria-labelledby="jobs-h">
+    <div class="jobs-heading">
+      <div>
+        <p class="eyebrow">Your home</p>
+        <h2 id="jobs-h">Repair jobs</h2>
+      </div>
+      <div class="jobs-tools">
+        <label class="filter-control" for="job-filter">
+          <span>Show</span>
+          <select id="job-filter">
+            <option value="all">All jobs</option>
+            <option value="New">New jobs</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="urgent">Urgent priority</option>
+          </select>
+        </label>
+        <span class="live-label"><span aria-hidden="true"></span> Live updates</span>
+      </div>
+    </div>
+    <div id="view"></div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
