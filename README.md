@@ -16,7 +16,7 @@ No installs, build step, server, account or API key is needed.
 2. **Open a job:** Select **Open job MH-0001** (or the relevant ID) in the job list.
 3. **Update a job:** Choose a status (New, In Progress or Completed), type a note, then select **Save update**.
 4. **Complete a job:** Choose **Completed** and enter a completion note. A completion note is required.
-5. **Review history:** Every job shows its latest note and a dated and timed history. Earlier entries are never removed.
+5. **Review history:** Every job shows its latest note and a dated and timed history. Earlier entries are never removed unless selected by the user.
 
 ## Features
 
