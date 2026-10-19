@@ -1,0 +1,308 @@
+#!/usr/bin/env python3
+"""Meadow House Repairs - standard-library-only Python web app.
+Run: python3 app.py   then open http://127.0.0.1:8000
+Jobs are saved to jobs.json next to this file (fictional data only)."""
+import html, json, os, threading
+from datetime import datetime
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qs, urlparse
+
+DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "jobs.json")
+HOUSE = "Meadow House"
+STATUSES = ["New", "In Progress", "Completed"]
+LOCK = threading.Lock()
+
+
+def load():
+    try:
+        with open(DATA, encoding="utf-8") as f:
+            d = json.load(f)
+        return d if isinstance(d, list) else []
+    except (OSError, ValueError):
+        return []
+
+
+def save(jobs):
+    tmp = DATA + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(jobs, f, indent=2)
+    os.replace(tmp, DATA)
+
+
+def now():
+    return datetime.now().astimezone().isoformat(timespec="seconds")
+
+
+def fmt(iso):
+    return datetime.fromisoformat(iso).strftime("%d %b %Y, %H:%M:%S")
+
+
+def e(s):
+    return html.escape(str(s), quote=True)
+
+
+def next_id(jobs):
+    n = 0
+    for j in jobs:
+        try:
+            n = max(n, int(j["id"].split("-")[1]))
+        except (ValueError, IndexError, KeyError):
+            pass
+    return "MH-%04d" % (n + 1)
+
+
+def latest_note(j):
+    for h in reversed(j["history"]):
+        if h.get("note"):
+            return h
+    return None
+
+
+def note_label(h):
+    return "Completion note" if h["status"] == "Completed" else "Progress note"
+
+
+CSS = """
+:root{--bg:#f3f6f1;--ink:#1c2420;--muted:#4a574f;--line:#b9c4bb;--accent:#1f5f46;--err:#a30f0f;--ok:#14532d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,"Times New Roman",serif}
+header,main{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-size:28px;margin:8px 0 0}h2{font-size:22px;margin:0 0 12px}h3{font-size:18px;margin:0}h4{margin:16px 0 4px}
+.sub{color:var(--muted);margin:4px 0 0}
+.grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:24px;align-items:start}
+@media(max-width:800px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel,.job{background:#fff;border:1px solid var(--line);border-radius:6px;padding:16px;overflow-wrap:anywhere}
+ul.jobs{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+label,legend{display:block;font-weight:bold;margin-bottom:4px}
+input,textarea,select,button{font:inherit;font-size:16px;max-width:100%}
+input,textarea,select{width:100%;padding:8px;border:2px solid #5d6b62;border-radius:4px;background:#fff;color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+[aria-invalid="true"]{border-color:var(--err)}
+.field{margin-bottom:12px}
+.err{color:var(--err);font-weight:bold;margin:4px 0 0}.err:empty{display:none}
+.hint{color:var(--muted);font-size:14px;margin:4px 0 0}
+.summary{border:2px solid var(--err);background:#fdeeee;color:var(--err);padding:8px 12px;border-radius:4px;margin-bottom:12px;font-weight:bold}
+.notice{border:2px solid var(--ok);background:#e6f4ea;color:var(--ok);padding:8px 12px;border-radius:4px;margin-bottom:12px;font-weight:bold}
+button,a.btn{display:inline-block;cursor:pointer;border-radius:4px;padding:8px 14px;border:2px solid var(--accent);background:var(--accent);color:#fff;font-weight:bold;text-decoration:none}
+a{color:#0b3fa8;font-weight:bold}a.btn{color:#fff}
+:focus-visible{outline:3px solid #0b3fa8;outline-offset:2px}
+.head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;border:1px solid var(--ink);font-size:14px;font-weight:bold;background:#eef2ee}
+.badge.urgent{background:#fde6e6;color:#7f1010;border-color:#7f1010}
+.badge.done{background:#dff3e6;color:var(--ok);border-color:var(--ok)}
+dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 12px;margin:8px 0}
+dt{font-weight:bold}dd{margin:0;white-space:pre-wrap}
+.note{border-left:4px solid var(--accent);padding:4px 10px;background:#f0f5f1;margin:8px 0;white-space:pre-wrap}
+ol.hist{margin:8px 0 0;padding-left:22px}ol.hist li{margin-bottom:8px;white-space:pre-wrap}
+time{color:var(--muted)}.empty{color:var(--muted)}
+"""
+
+JS = "var r=document.getElementById('result');if(r){r.focus();}"
+
+
+def page(title, body):
+    return ("<!doctype html><html lang='en-GB'><head><meta charset='utf-8'>"
+            "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+            "<title>%s</title><style>%s</style></head><body>"
+            "<header><h1>Meadow House Repairs</h1>"
+            "<p class='sub'>Report a repair, follow its progress and see what was done.</p></header>"
+            "<main>%s</main><script>%s</script></body></html>" % (e(title), CSS, body, JS))
+
+
+def badges(j):
+    st = "done" if j["status"] == "Completed" else ""
+    pr = "urgent" if j["priority"] == "Urgent" else ""
+    return ("<span class='badge %s'>Status: %s</span><span class='badge %s'>%s priority</span>"
+            % (st, e(j["status"]), pr, e(j["priority"])))
+
+
+def note_block(j):
+    n = latest_note(j)
+    if not n:
+        return ""
+    return "<div class='note'><strong>%s:</strong> %s</div>" % (
+        "Latest note (%s)" % note_label(n) if n["status"] != "Completed" else "Completion note", e(n["note"]))
+
+
+def err_p(fid, msg):
+    return "<p class='err' id='%s-err'>%s</p>" % (fid, e(msg or ""))
+
+
+def inv(msg):
+    return " aria-invalid='true'" if msg else ""
+
+
+def summary(errs, title):
+    if not errs:
+        return ""
+    items = "".join("<li>%s</li>" % e(m) for m in errs.values())
+    return ("<div id='result' class='summary' role='alert' tabindex='-1'>%s<ul>%s</ul></div>" % (e(title), items))
+
+
+def home(v=None, errs=None, notice=None):
+    v, errs = v or {}, errs or {}
+    jobs = load()
+    prio = v.get("priority", "Normal")
+    form = """
+<section class='panel' aria-labelledby='rh'><h2 id='rh'>Report a repair</h2>
+%s<form method='post' action='/report' novalidate>
+<div class='field'><label for='desc'>Repair description</label>
+<textarea id='desc' name='description' aria-describedby='desc-err'%s>%s</textarea>%s</div>
+<div class='field'><label for='reporter'>Reporter name</label>
+<input id='reporter' name='reporter' type='text' value='%s' aria-describedby='reporter-err'%s>%s</div>
+<div class='field'><label for='prio'>Priority</label>
+<select id='prio' name='priority'><option%s>Normal</option><option%s>Urgent</option></select></div>
+<button type='submit'>Submit report</button></form></section>""" % (
+        summary(errs, "Report not saved. Fix the following:"),
+        inv(errs.get("description")), e(v.get("description", "")), err_p("desc", errs.get("description")),
+        e(v.get("reporter", "")), inv(errs.get("reporter")), err_p("reporter", errs.get("reporter")),
+        " selected" if prio == "Normal" else "", " selected" if prio == "Urgent" else "")
+    note = ""
+    if notice:
+        note = "<div id='result' class='notice' role='status' tabindex='-1'>%s</div>" % e(notice)
+    if jobs:
+        items = ""
+        for j in reversed(jobs):
+            items += ("<li class='job'><div class='head'><h3>Job %s</h3>%s</div>"
+                      "<dl><dt>House</dt><dd>%s</dd><dt>Reported</dt><dd>%s</dd><dt>Reporter</dt><dd>%s</dd>"
+                      "<dt>Description</dt><dd>%s</dd></dl>%s<a href='/job/%s'>Open job %s</a></li>" % (
+                          e(j["id"]), badges(j), e(j["house"]), e(fmt(j["created"])), e(j["reporter"]),
+                          e(j["description"]), note_block(j), e(j["id"]), e(j["id"])))
+        listing = "<ul class='jobs'>%s</ul>" % items
+    else:
+        listing = "<p class='empty'>No repair jobs yet. Use the form to report the first repair.</p>"
+    body = "<div class='grid'>%s<section aria-labelledby='jh'><h2 id='jh'>Repair jobs</h2>%s%s</section></div>" % (
+        form, note, listing)
+    return page("Meadow House Repairs", body)
+
+
+def detail(j, v=None, errs=None, notice=None):
+    v, errs = v or {}, errs or {}
+    cur = v.get("status", j["status"])
+    note = ""
+    if notice:
+        note = "<div id='result' class='notice' role='status' tabindex='-1'>%s</div>" % e(notice)
+    hist = ""
+    for h in j["history"]:
+        txt = "<strong>%s</strong>" % e(h["label"])
+        if h.get("note"):
+            txt += " &ndash; %s: %s" % (e(note_label(h)), e(h["note"]))
+        hist += "<li><time datetime='%s'>%s</time> %s</li>" % (e(h["at"]), e(fmt(h["at"])), txt)
+    form = ""
+    if j["status"] != "Completed":
+        opts = "".join("<option%s>%s</option>" % (" selected" if s == cur else "", s) for s in STATUSES)
+        form = """<section aria-labelledby='uh'><h4 id='uh'>Update this job</h4>%s
+<form method='post' action='/job/%s/update' novalidate>
+<div class='field'><label for='status'>Status</label><select id='status' name='status'>%s</select></div>
+<div class='field'><label for='note'>Note</label>
+<textarea id='note' name='note' aria-describedby='note-hint note-err'%s>%s</textarea>
+<p class='hint' id='note-hint'>Add a progress note. A completion note is required when the status is Completed.</p>%s</div>
+<button type='submit'>Save update</button></form></section>""" % (
+            summary(errs, "Update not saved. Fix the following:"), e(j["id"]), opts,
+            inv(errs.get("note")), e(v.get("note", "")), err_p("note", errs.get("note")))
+    body = ("<p><a href='/'>Back to all jobs</a></p>%s<article class='job' aria-labelledby='dh'>"
+            "<div class='head'><h2 id='dh'>Job %s</h2>%s</div>"
+            "<dl><dt>House</dt><dd>%s</dd><dt>Reported</dt><dd>%s</dd><dt>Reporter</dt><dd>%s</dd>"
+            "<dt>Description</dt><dd>%s</dd></dl>%s%s"
+            "<h4>History</h4><ol class='hist'>%s</ol></article>") % (
+        note, e(j["id"]), badges(j), e(j["house"]), e(fmt(j["created"])), e(j["reporter"]),
+        e(j["description"]), note_block(j), form, hist)
+    return page("Job " + j["id"], body)
+
+
+class H(BaseHTTPRequestHandler):
+    def send(self, body, code=200):
+        b = body.encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(b)))
+        self.end_headers()
+        self.wfile.write(b)
+
+    def redirect(self, loc):
+        self.send_response(303)
+        self.send_header("Location", loc)
+        self.end_headers()
+
+    def find(self, jid):
+        return next((j for j in load() if j["id"] == jid), None)
+
+    def do_GET(self):
+        u = urlparse(self.path)
+        qs = parse_qs(u.query)
+        parts = [p for p in u.path.split("/") if p]
+        if not parts:
+            notice = None
+            cid = qs.get("created", [""])[0]
+            j = self.find(cid) if cid else None
+            if j:
+                notice = "Job %s saved as New with %s priority." % (j["id"], j["priority"])
+            return self.send(home(notice=notice))
+        if len(parts) == 2 and parts[0] == "job":
+            j = self.find(parts[1])
+            if j:
+                n = "Job %s saved. Status is %s." % (j["id"], j["status"]) if qs.get("saved") else None
+                return self.send(detail(j, notice=n))
+        self.send(page("Not found", "<p>Page not found. <a href='/'>Back to all jobs</a></p>"), 404)
+
+    def form(self):
+        n = min(int(self.headers.get("Content-Length") or 0), 1_000_000)
+        raw = self.rfile.read(n).decode("utf-8", "replace")
+        return {k: v[0].replace("\r\n", "\n") for k, v in parse_qs(raw, keep_blank_values=True).items()}
+
+    def do_POST(self):
+        parts = [p for p in urlparse(self.path).path.split("/") if p]
+        f = self.form()
+        with LOCK:
+            if parts == ["report"]:
+                d, r = f.get("description", ""), f.get("reporter", "")
+                p = f.get("priority", "Normal")
+                p = p if p in ("Normal", "Urgent") else "Normal"
+                errs = {}
+                if not d.strip():
+                    errs["description"] = "Enter a description of the repair. It cannot be empty or only spaces."
+                if not r.strip():
+                    errs["reporter"] = "Enter the reporter name. It cannot be empty or only spaces."
+                if errs:
+                    return self.send(home({"description": d, "reporter": r, "priority": p}, errs))
+                jobs = load()
+                t = now()
+                j = {"id": next_id(jobs), "house": HOUSE, "description": d.strip(), "reporter": r.strip(),
+                     "priority": p, "status": "New", "created": t,
+                     "history": [{"at": t, "status": "New", "label": "Job created as New", "note": ""}]}
+                jobs.append(j)
+                save(jobs)
+                return self.redirect("/?created=" + j["id"])
+            if len(parts) == 3 and parts[0] == "job" and parts[2] == "update":
+                jobs = load()
+                j = next((x for x in jobs if x["id"] == parts[1]), None)
+                if not j:
+                    return self.send(page("Not found", "<p>Job not found.</p>"), 404)
+                st, note = f.get("status", ""), f.get("note", "").strip()
+                errs = {}
+                if j["status"] == "Completed":
+                    errs["note"] = "This job is already Completed."
+                elif st not in STATUSES:
+                    errs["note"] = "Choose a valid status."
+                elif st == "Completed" and not note:
+                    errs["note"] = ("Enter a completion note to mark this job Completed. It cannot be empty or only "
+                                    "spaces. The job is still %s." % j["status"])
+                elif st == j["status"] and not note:
+                    errs["note"] = "Add a note or choose a different status. There is nothing to save."
+                if errs:
+                    return self.send(detail(j, {"status": st, "note": f.get("note", "")}, errs))
+                label = "Status: %s" % st if st != j["status"] else "Status stays %s" % st
+                j["status"] = st
+                j["history"].append({"at": now(), "status": st, "label": label, "note": note})
+                save(jobs)
+                return self.redirect("/job/%s?saved=1" % j["id"])
+        self.send(page("Not found", "<p>Not found.</p>"), 404)
+
+    def log_message(self, *a):
+        pass
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", "8000"))
+    print("Meadow House Repairs running at http://127.0.0.1:%d (Ctrl+C to stop)" % port)
+    ThreadingHTTPServer(("127.0.0.1", port), H).serve_forever()
